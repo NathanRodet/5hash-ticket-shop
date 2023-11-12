@@ -1,8 +1,18 @@
-# How to start
+# 5HASH - Taylor Shift's Ticket Shop
 
-We will see the prerequisite to launch this Terraform configuration across environments.
+## Projects Needs
 
-## Prerequisite
+Determine the services needed to match the following needs :
+
+- Deploy Prestashop docker image from Docker Hub to AWS and include a database.
+- Ensure the app is hosted and ready to handle a huge traffic. (Apache benchmark ?)
+- Prioritize scalability and reliability.
+- Provide README.md documentation.
+- Estimate the base cost and variables from autoscale of the infrastructure.
+
+## Prerequisites
+
+We will see the prerequisites to launch this Terraform configuration across environments.
 
 ### Provide AWS credentials
 
