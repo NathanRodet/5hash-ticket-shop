@@ -14,7 +14,7 @@ Determine the services needed to match the following needs :
 
 We will see the prerequisites to launch this Terraform configuration across environments.
 
-### Provide AWS credentials
+### Provide AWS credentials to use Terraform and AWS cli
 
 ```bash
 export AWS_ACCESS_KEY_ID="EXAMPLE"
@@ -22,6 +22,16 @@ export AWS_SECRET_ACCESS_KEY="EXAMPLE"
 export AWS_REGION="EXAMPLE"
 ```
 
+### Deploy Terraform backend using AWS cli
+
+```bash
+aws s3 mb s3://bucketDev --region us-west-2
+# OR
+aws s3 mb s3://bucketStaging --region us-west-2
+# OR
+
+aws s3 mb s3://bucketProd --region us-west-2
+```
 
 
 <ec2-autoscale-group->
