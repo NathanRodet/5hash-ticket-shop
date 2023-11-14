@@ -5,5 +5,5 @@
 
 output "ecr-repository-url" {
   description = "ECR Repository URL "
-  value       = aws_ecr_repository.ecr-repository.repository_url
+  value       = aws_ecrpublic_repository.ecr-public-repository.repository_uri
 }

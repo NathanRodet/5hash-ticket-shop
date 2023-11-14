@@ -7,20 +7,20 @@
 #   }
 
 #   tags = {
-#     "ENVIRONMENT" = var.ENVIRONEMENT
+#     "ENVIRONMENT" = var.ENVIRONMENT
 #   }
 # }
 
 
 # resource "aws_autoscaling_group" "autoscale-group" {
 #   # 3 Regions to provide High Availability (free tier)
-#   availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-#   desired_capacity   = (
-#     var.ENVIRONEMENT == "dev" ? 1 :
-#     var.ENVIRONEMENT == "rec" ? 1 :
-#     var.ENVIRONEMENT == "prod" ? 3 : 1)
-#   max_size           = 10
-#   min_size           = 1
+#   availability_zones = ["${var.LOCATION}a", "${var.LOCATION}b", "${var.LOCATION}c"]
+#   desired_capacity = (
+#     var.ENVIRONMENT == "dev" ? 1 :
+#     var.ENVIRONMENT == "rec" ? 1 :
+#   var.ENVIRONMENT == "prod" ? 3 : 1)
+#   max_size = 10
+#   min_size = 1
 
 #   mixed_instances_policy {
 #     launch_template {
@@ -61,7 +61,7 @@
 # }
 
 resource "aws_ecrpublic_repository" "ecr-public-repository" {
-  repository_name = "ecr-hash5"
+  repository_name = "ecr-hash5-${var.ENVIRONMENT}"
 
   catalog_data {
     about_text        = "Should contain Prestashop image from Docker Hub to be used by ECR"
@@ -70,7 +70,8 @@ resource "aws_ecrpublic_repository" "ecr-public-repository" {
   }
 
   tags = {
-    ENVIRONEMENT = var.ENVIRONEMENT
+    ENVIRONEMENT = var.ENVIRONMENT
+    LOCATION     = var.AWS_REGION
   }
 }
 
@@ -85,7 +86,7 @@ resource "aws_ecrpublic_repository" "ecr-public-repository" {
 #   var.ENVIRONEMENT == "prod" ? var.INSTANCE_TYPE : var.INSTANCE_TYPE)
 
 #   tags = {
-#     "ENVIRONMENT" = var.ENVIRONEMENT
+#     "ENVIRONMENT" = var.ENVIRONMENT
 #   }
 # }
 
