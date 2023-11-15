@@ -1,3 +1,19 @@
+locals {
+  # Convention : <resource>-<region>-<environment>
+  NAMING_SUFFIX = "${var.AWS_REGION}-${var.ENVIRONMENT}"
+}
+
+# Container Registry Repository
+
+resource "aws_ecr_repository" "ecr-repository" {
+  name                 = "ecr-repository-${local.NAMING_SUFFIX}"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 # resource "aws_ecs_cluster" "ecs-cluster" {
 #   name = "test-ecs-cluster"
 
@@ -60,20 +76,20 @@
 #   }
 # }
 
-resource "aws_ecrpublic_repository" "ecr-public-repository" {
-  repository_name = "ecr-hash5-${var.ENVIRONMENT}"
+# resource "aws_ecrpublic_repository" "ecr-public-repository" {
+#   repository_name = "ecr-hash5-${var.ENVIRONMENT}"
 
-  catalog_data {
-    about_text        = "Should contain Prestashop image from Docker Hub to be used by ECR"
-    description       = "Description"
-    operating_systems = ["Linux"]
-  }
+#   catalog_data {
+#     about_text        = "Should contain Prestashop image from Docker Hub to be used by ECR"
+#     description       = "Description"
+#     operating_systems = ["Linux"]
+#   }
 
-  tags = {
-    ENVIRONEMENT = var.ENVIRONMENT
-    LOCATION     = var.AWS_REGION
-  }
-}
+#   tags = {
+#     ENVIRONEMENT = var.ENVIRONMENT
+#     LOCATION     = var.AWS_REGION
+#   }
+# }
 
 # resource "aws_launch_template" "launch-template" {
 #   name_prefix = "prestashop-ecs"
