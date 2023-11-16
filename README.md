@@ -26,7 +26,8 @@ aws configure
 ```bash
 # Linux
 export TF_VAR_AWS_ACCESS_KEY=
-export TF_VAR_AWS_SECRET_KEY
+export TF_VAR_AWS_SECRET_KEY=
+export TF_VAR_AWS_ACCOUNT_ID=210878325243
 export TF_VAR_AWS_REGION=eu-west-1
 export TF_VAR_ENVIRONMENT=dev
 ```
@@ -60,12 +61,11 @@ aws ecr get-login-password --region $TF_VAR_AWS_REGION | docker login --username
 ```
 
 ### Push the images to ECR
-
 ```bash
 docker pull prestashop/prestashop:latest
-docker tag prestashop/prestashop "$AWS_DOCKER_REPOSITORY_URI/prestashop:aws-latest"
-docker push "$AWS_DOCKER_REPOSITORY_URI/prestashop:aws-latest"
-# docker rmi prestashop/prestashop "$AWS_DOCKER_REPOSITORY_URI/prestashop:aws-latest"
+docker tag prestashop/prestashop "$AWS_DOCKER_REPOSITORY_URI:prestashop"
+docker push "$AWS_DOCKER_REPOSITORY_URI:prestashop"
+# docker rmi prestashop/prestashop "$AWS_DOCKER_REPOSITORY_URI:prestashop"
 ```
 
 ### Create image for AWS public ECR
