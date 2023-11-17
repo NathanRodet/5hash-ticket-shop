@@ -16,11 +16,6 @@ variable "AWS_REGION" {
   default     = "eu-west-1"
 }
 
-variable "AWS_ACCOUNT_ID" {
-  description = "AWS Account ID"
-  type        = string
-}
-
 variable "ENVIRONMENT" {
   description = "Environment"
   type        = string
