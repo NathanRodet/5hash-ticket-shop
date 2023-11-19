@@ -55,36 +55,29 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 resource "aws_lb" "prestashop_lb" {
   name               = "prestashop-lb"
   internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
+  load_balancer_type = "gateway"
   subnets            = ["${aws_subnet.subnet_1.id}", "${aws_subnet.subnet_2.id}"]
 
   enable_deletion_protection = false
 }
 
 # ALB HTTPS listener using the ACM certificate
-resource "aws_lb_listener" "prestashop_https_listener" {
+resource "aws_lb_listener" "prestashop_http_listener" {
   load_balancer_arn = aws_lb.prestashop_lb.arn
-  port              = 80     # should be 443
-  protocol          = "HTTP" # should be "HTTPS"
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.prestashop_target_group.arn
   }
-
-  # certificate_arn = aws_acm_certificate.ssl_certificate.arn
-
-  # depends_on = [aws_acm_certificate_validation.domain_com_record_validation]
-
 }
 
 # Define target group for ECS service
 resource "aws_lb_target_group" "prestashop_target_group" {
-  name     = "prestashop-target-group"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.vpc.id
+  name        = "prestashop-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "instance"
+  vpc_id      = aws_vpc.vpc.id
 }
 
 # Attach ECS service to target group

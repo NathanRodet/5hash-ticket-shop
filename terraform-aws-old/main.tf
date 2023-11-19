@@ -119,3 +119,5 @@ resource "aws_db_instance" "rds" {
     "REGION"      = var.AWS_REGION
   }
 }
+
+
