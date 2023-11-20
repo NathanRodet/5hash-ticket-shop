@@ -26,3 +26,15 @@ variable "PROJECT_NAME" {
   sensitive   = false
   description = "Project name."
 }
+
+variable "MYSQL_ADMIN_LOGIN" {
+  type        = string
+  sensitive   = false
+  description = "Admin login."
+}
+
+variable "MYSQL_ADMIN_PASSWORD" {
+  type        = string
+  sensitive   = false
+  description = "Admin password."
+}

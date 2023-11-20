@@ -67,4 +67,26 @@ resource "azurerm_kubernetes_cluster" "aks" {
     environment = var.ENVIRONMENT
     project     = var.PROJECT_NAME
   }
+  
+}
+
+resource "azurerm_mysql_server" "mysql_server" {
+  name                = "sqlserver-${var.PROJECT_NAME}-${var.ENVIRONMENT}-${var.LOCATION}"
+  location            = var.LOCATION
+  resource_group_name = var.RESOURCE_GROUP_NAME
+
+  administrator_login          = var.MYSQL_ADMIN_LOGIN
+  administrator_login_password = var.MYSQL_ADMIN_PASSWORD
+
+  sku_name   = var.ENVIRONMENT == "prod" ? "GP_Gen5_4" : var.ENVIRONMENT == "rec" ? "B_Gen5_2" : var.ENVIRONMENT == "dev" ? "B_Gen5_2" : null
+  storage_mb = 10240
+  version    = "5.7"
+
+  auto_grow_enabled                 = false # Free tier.
+  backup_retention_days             = 7
+  geo_redundant_backup_enabled      = false
+  infrastructure_encryption_enabled = false
+  public_network_access_enabled     = true
+  ssl_enforcement_enabled           = true
+  ssl_minimal_tls_version_enforced  = "TLS1_2"
 }

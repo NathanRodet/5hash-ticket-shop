@@ -36,6 +36,8 @@ PROJECT_NAME="5hash"
 ENVIRONMENT="dev"
 LOCATION="northeurope"
 RESOURCE_GROUPE_NAME="rg-5hash-dev-northeurope"
+MYSQL_ADMIN_LOGIN    ="myloginsupinfo" # This is credentials and should not be push in real environment.
+MYSQL_ADMIN_PASSWORD ="Mypassword100!" # This is credentials and should not be push in real environment.
 ```
 
 ### Deploy Terraform backend to Azure in storage account (default to westeurope because inavailable in northeurope)
@@ -76,6 +78,7 @@ resource_group_name  = "rg-5hash-dev-northeurope"
 storage_account_name = "tfstate5hashdev"
 container_name       = "tfstate"
 key                  = "terraform.tfstate"
+
 ```
 
 ## Start deploying
@@ -156,3 +159,29 @@ kubectl delete -k  ./kubernetes/overlays/$ENVIRONMENT
 # Get ingress controller public IP
 kubectl --namespace app get services ingress-nginx-controller | awk '{print $4}' | tail -n 1
 ```
+az provider register --namespace Microsoft.Network
+az provider register --namespace microsoft.support
+az provider register --namespace Microsoft.SerialConsole
+az provider register --namespace Microsoft.ResourceNotifications
+az provider register --namespace Microsoft.ResourceGraph
+az provider register --namespace Microsoft.Portal
+az provider register --namespace Microsoft.MarketplaceOrdering
+az provider register --namespace Microsoft.Features
+az provider register --namespace Microsoft.CostManagement
+az provider register --namespace Microsoft.Consumption
+az provider register --namespace Microsoft.Commerce
+az provider register --namespace Microsoft.ClassicSubscription
+az provider register --namespace Microsoft.Billing
+az provider register --namespace Microsoft.Authorization
+az provider register --namespace Microsoft.ADHybridHealthService
+az provider register --namespace Microsoft.Resources
+az provider register --namespace Microsoft.Network
+az provider register --namespace Microsoft.Compute
+az provider register --namespace Microsoft.Advisor
+az provider register --namespace Microsoft.ManagedIdentity
+az provider register --namespace Microsoft.Kubernetes
+az provider register --namespace Microsoft.ContainerService
+az provider register --namespace Microsoft.ContainerInstance
+az provider register --namespace Microsoft.ContainerRegistry
+az provider register --namespace Microsoft.Storage
+az provider register --namespace Microsoft.DBforMySQL
