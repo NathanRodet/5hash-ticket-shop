@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prestashop
+spec:
+  selector:
+    matchLabels:
+      app: prestashop
+  replicas: 5
+  template:
+    spec:
+      containers:
+        - name: prestashop
+          image: acr5hashdevnortheurope.azurecr.io/prestashop:latest
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "640Mi"
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
