@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
         - name: prestashop
+          imagePullPolicy: Always
           env:
             - name: PORT
               value: "8080"
@@ -24,14 +25,14 @@ spec:
             - name: DB_PASSWD
               value: "Mypassword100!"
             - name: DB_NAME
-              value: "sqlserver-5hash-dev-northeurope"
+              value: "prestashopdbdev"
             - name: DB_SERVER
               value: "sqlserver-5hash-dev-northeurope.mysql.database.azure.com"
-            - name: ADMIN_MAIL 
-              value: "taylorShift"
-            - name: ADMIN_PASSWD 
+            - name: ADMIN_MAIL
+              value: "taylorShift@gmail.com"
+            - name: ADMIN_PASSWD
               value: "Mypassword100!"
-            - name: PS_HOST_MODE
+            - name: PS_HANDLE_DYNAMIC_DOMAIN
               value: "1"
           ports:
             - containerPort: 8080
@@ -41,7 +42,7 @@ spec:
               path: "/"
               port: 8080
           livenessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             httpGet:
               path: "/"
               port: 8080

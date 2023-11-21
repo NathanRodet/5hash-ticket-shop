@@ -1,3 +1,7 @@
+# This variable file is used to define the variables used in the Terraform configuration.
+
+# Global
+
 variable "ENVIRONMENT" {
   type        = string
   sensitive   = false
@@ -27,6 +31,7 @@ variable "PROJECT_NAME" {
   description = "Project name."
 }
 
+# MySQL Database
 variable "MYSQL_ADMIN_LOGIN" {
   type        = string
   sensitive   = false
@@ -38,3 +43,4 @@ variable "MYSQL_ADMIN_PASSWORD" {
   sensitive   = false
   description = "Admin password."
 }
+

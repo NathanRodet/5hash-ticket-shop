@@ -9,3 +9,7 @@ patches:
     target:
       kind: Deployment
       name: prestashop
+  - path: autoscale.yaml
+    target:
+      kind: HorizontalPodAutoscaler
+      name: prestashop

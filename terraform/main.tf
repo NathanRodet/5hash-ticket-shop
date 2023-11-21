@@ -1,5 +1,10 @@
+# All comments are mode by Github Copilot, this is not ChatGPT
+# The resources are configured with tags to allow for easier cost management.
+
+# This resource is used to generate a random prefix for the kubernetes dns prefix.
 resource "random_pet" "prefix" {}
 
+# This container registry is used to store the images built by the build pipeline.
 resource "azurerm_container_registry" "acr" {
   name                = "acr${var.PROJECT_NAME}${var.ENVIRONMENT}${var.LOCATION}"
   resource_group_name = var.RESOURCE_GROUP_NAME
@@ -17,6 +22,7 @@ resource "azurerm_container_registry" "acr" {
   }
 }
 
+# This role assignment is used to allow the AKS cluster to pull images from the container registry.
 resource "azurerm_role_assignment" "acr_pull" {
   principal_id                     = azurerm_kubernetes_cluster.aks.identity[0].principal_id
   scope                            = azurerm_container_registry.acr.id
@@ -29,6 +35,7 @@ resource "azurerm_role_assignment" "acr_pull" {
   ]
 }
 
+# This Kubernetes cluster is used to host the prestashop application.
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-${var.PROJECT_NAME}-${var.ENVIRONMENT}-${var.LOCATION}"
   resource_group_name = var.RESOURCE_GROUP_NAME
@@ -40,12 +47,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   default_node_pool {
     name = "default"
 
+    # The same vm_size is used for all environments to prevent unexpected costs. Only the number of nodes is changed.
     vm_size = var.ENVIRONMENT == "prod" ? "Standard_B2s" : var.ENVIRONMENT == "rec" ? "Standard_B2s" : var.ENVIRONMENT == "dev" ? "Standard_B2s" : null
 
     enable_auto_scaling = true
-    # Match the client prerequisites
-    max_count       = var.ENVIRONMENT == "prod" ? 3 : var.ENVIRONMENT == "rec" ? 3 : var.ENVIRONMENT == "dev" ? 1 : null
-    min_count       = var.ENVIRONMENT == "prod" ? 3 : var.ENVIRONMENT == "rec" ? 3 : var.ENVIRONMENT == "dev" ? 1 : null
+    # The max and min count is set to 5 for production and rec, and 1 for dev.
+    max_count       = var.ENVIRONMENT == "prod" ? 5 : var.ENVIRONMENT == "rec" ? 5 : var.ENVIRONMENT == "dev" ? 1 : null
+    min_count       = var.ENVIRONMENT == "prod" ? 2 : var.ENVIRONMENT == "rec" ? 2 : var.ENVIRONMENT == "dev" ? 1 : null
     max_pods        = var.ENVIRONMENT == "prod" ? 60 : var.ENVIRONMENT == "rec" ? 60 : var.ENVIRONMENT == "dev" ? 60 : null
     os_disk_size_gb = "30"
   }
@@ -67,9 +75,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     environment = var.ENVIRONMENT
     project     = var.PROJECT_NAME
   }
-  
+
 }
 
+# This MySQL Server is used to store the data for the prestashop application.
+# The database is configured with a single vCore and 10GB of storage. (for cost reasons)
+# The database is configured with auto-growth disabled to prevent unexpected costs.
+# The database is configured with a 7 day backup retention period. (default, for cost reasons)
 resource "azurerm_mysql_server" "mysql_server" {
   name                = "sqlserver-${var.PROJECT_NAME}-${var.ENVIRONMENT}-${var.LOCATION}"
   location            = var.LOCATION
@@ -87,6 +99,34 @@ resource "azurerm_mysql_server" "mysql_server" {
   geo_redundant_backup_enabled      = false
   infrastructure_encryption_enabled = false
   public_network_access_enabled     = true
-  ssl_enforcement_enabled           = true
-  ssl_minimal_tls_version_enforced  = "TLS1_2"
+  # Because we will not pay a custom domain and a certificate for this project, we will not enable SSL.
+  ssl_enforcement_enabled          = false
+  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    environment = var.ENVIRONMENT
+    project     = var.PROJECT_NAME
+  }
+}
+
+# This MySQL Database is used to store the data for the prestashop application.
+resource "azurerm_mysql_database" "mysql_database" {
+  name                = "prestashopdb${var.ENVIRONMENT}"
+  resource_group_name = var.RESOURCE_GROUP_NAME
+  server_name         = azurerm_mysql_server.mysql_server.name
+  charset             = "utf8"
+  collation           = "utf8_unicode_ci"
+}
+
+# Allow all internal azure services to access the MySQL Database. Source : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/sql_firewall_rule
+resource "azurerm_mysql_firewall_rule" "firewall_rule_allow_azure_services" {
+  name                = "AllowAzureServices"
+  resource_group_name = var.RESOURCE_GROUP_NAME
+  server_name         = azurerm_mysql_server.mysql_server.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
 }
