@@ -1,0 +1,16 @@
+# this configMap should be added by the CI/CD pipeline
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prestashop-config
+  namespace: app
+data:
+  PORT: "8080"
+  DB_USER: "taylorShift@sqlserver-5hash-prod-northeurope"
+  DB_PASSWD: "Mypassword100!"
+  DB_NAME: "prestashopdbprod"
+  DB_SERVER: "sqlserver-5hash-prod-northeurope.mysql.database.azure.com"
+  ADMIN_MAIL: "taylorShift@gmail.com"
+  ADMIN_PASSWD: "Mypassword100!"
+  PS_INSTALL_AUTO: "1"
+  PS_HANDLE_DYNAMIC_DOMAIN: "1"

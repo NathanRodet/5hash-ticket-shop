@@ -1,5 +1,23 @@
 # 5HASH - Taylor Shift's Ticket Shop
 
+## Issues
+
+About our project :
+
+We encountered some errors in the container after deploying it to AKS. We used the prestashop/shop image but found out the bitnami/prestashop could have been a better option.
+
+The prestashop containers could access the provisionned database but retourned an error :
+```bash
+PHP Warning: Attempt to read property "theme_name" on null in /var/www/html/var/cache/prod/ContainerRtQSNAI/appAppKernelProdContainer.php on line 2869 
+Errors :
+[WARNING] Some commands could not be registered:
+In Configuration.php line 331:
+PrestaShop\PrestaShop\Adapter\Configuration::restrictUpdatesTo(): Argument
+#1 ($shop) must be of type Shop, null given, called in /var/www/html/src/Core/Addon/Theme/ThemeManagerBuilder.php on line 61 
+```
+
+We also encountered an issue with AKS, we started with this provider and all used our free tier so we need to swap from provider from AWS to Azure.
+
 ## Projects Needs
 
 Determine the services needed to match the following needs :
@@ -15,7 +33,7 @@ Determine the services needed to match the following needs :
 You must consider the `ENVIRONMENT` variable in the following configuration as your project environment.
 The following environment are accepted : `dev`, `rec`, `prod`. The terraform configuration will match the differents criteria of the infrastructure depending the chosen environment.
 
-You most replace the environment value to match the environment you're deploying. If you want automation, please use a library to insert environment variables instead of .tfvars files.
+You must replace the environment value to match the environment you're deploying. This is made for automation using CI/CD and handle variables library.
 
 ### Connect to AZ-CLI and select your subscription
 
@@ -30,7 +48,7 @@ az account show
 az account set --subscription <my-subscription>
 ```
 
-### Add the subscription basic providers
+### Add the subscription basic providers to Azure
 
 az provider register --namespace Microsoft.Network
 az provider register --namespace microsoft.support
@@ -58,6 +76,8 @@ az provider register --namespace Microsoft.ContainerInstance
 az provider register --namespace Microsoft.ContainerRegistry
 az provider register --namespace Microsoft.Storage
 az provider register --namespace Microsoft.DBforMySQL
+az provider register --namespace Microsoft.OperationalInsights
+az provider register --namespace Microsoft.OperationsManagement
 
 ### Create environment variables file inside the terraform folder : variables.tfvars (should not be pushed to repository, so add it to gitignore in real environment)
 
@@ -143,6 +163,34 @@ az acr login -n $ACR_NAME
 az acr import --name $ACR_NAME --source docker.io/prestashop/prestashop:latest --image prestashop:latest
 ```
 
+### Create the configMap to add secrets and environment variables
+
+You should create your files like this documentation precise it : https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/
+We need a configMap inside each overlays folders (dev, rec, prod) in kubernetes configuration.
+
+```bash
+# Example
+cat <<EOF >./kustomization.yaml
+# this configMap should be added by the CI/CD pipeline
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prestashop-config
+  namespace: app
+data:
+  port: "8080"
+  db_user: "taylorShift@sqlserver-5hash-dev-northeurope"
+  db_passwd: "Mypassword100!"
+  db_name: "prestashopdbdev"
+  db_server: "sqlserver-5hash-dev-northeurope.mysql.database.azure.com"
+  admin_mail: "taylorShift@gmail.com"
+  admin_passwd: "Mypassword100!"
+  ps_install_auto: "1"
+  ps_handle_dynamic_domain: "1"
+
+EOF
+```
+
 ### Deploy the Kubernetes configuration with Kustomize
 
 ```bash
@@ -190,7 +238,7 @@ kubectl delete -k  ./overlays/$ENVIRONMENT
 kubectl --namespace app get services ingress-nginx-controller | awk '{print $4}' | tail -n 1
 ```
 
-## Azure Cost Estimation
+## Azure Cost Estimation / Month
 
 Each deployed resource, except for Azure Role Assignment, incurs charges. It's crucial to estimate the cost of a month of service as accurately as possible for our different environments. The estimates are based on the maximum capacities of the machines; actual costs will likely be slightly lower as the server doesn't always need to be at its maximum power.
 

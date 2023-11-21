@@ -71,12 +71,24 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type = "SystemAssigned"
   }
 
+  # oms_agent {
+  #   log_analytics_workspace_id = azurerm_log_analytics_workspace.aks-log-analytics.id
+  # }
+
   tags = {
     environment = var.ENVIRONMENT
     project     = var.PROJECT_NAME
   }
-
 }
+
+# This log analytics workspace is used to store the logs from the kubernetes cluster and debug.
+# resource "azurerm_log_analytics_workspace" "aks-log-analytics" {
+#   name                = "log-workplace-${var.PROJECT_NAME}-${var.ENVIRONMENT}-${var.LOCATION}"
+#   location            = var.LOCATION
+#   resource_group_name = var.RESOURCE_GROUP_NAME
+#   sku                 = "PerGB2018"
+#   retention_in_days   = 30
+# }
 
 # This MySQL Server is used to store the data for the prestashop application.
 # The database is configured with a single vCore and 10GB of storage. (for cost reasons)
