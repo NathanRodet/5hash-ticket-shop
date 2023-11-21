@@ -190,4 +190,32 @@ kubectl delete -k  ./overlays/$ENVIRONMENT
 kubectl --namespace app get services ingress-nginx-controller | awk '{print $4}' | tail -n 1
 ```
 
+## Azure Cost Estimation
 
+Each deployed resource, except for Azure Role Assignment, incurs charges. It's crucial to estimate the cost of a month of service as accurately as possible for our different environments. The estimates are based on the maximum capacities of the machines; actual costs will likely be slightly lower as the server doesn't always need to be at its maximum power.
+
+### Azure Container Registry
+
+The Azure Container Registry remains the same across our various environments. With a basic level, it will cost us €4.72 per environment per month.
+
+### Azure Kubernetes Cluster
+
+The Azure Kubernetes Cluster is significantly more expensive. Our production and staging infrastructure plans for the deployment of several virtual machines to handle increased traffic, while development will only need one. We can use up to 5 VMs in production (and 3 in staging) costing €31 each.  
+At their minimum usage, the production and staging machines use only 2 VMs, lowering the price by €90 per month (the final price will be less impacted, as billing is based on usage, we might spend 50% of the time with 2 VMs and 50% with 5, which would cost us the average of the two prices).
+Deploying these VMs requires 1 Kubernetes cluster at €69.
+An additional 32GB storage disk for €1.45 should be added to this price.
+
+### Azure Database for MySQL
+
+We use different machines depending on the environment. In development and staging, we have chosen a single Gen5 2vcore server at €0.182 per hour. For more performance in production, we use a Gen5 4vcore machine at €0.364 per hour. These machines cost €132.90 and €265.81 respectively. Additionally, €0.60 per month should be added for 5GB of storage and €1.04 for 10GB of storage backups.
+
+### Cost Summary
+
+| Environment   | Role Assignment | Container Registry | Kubernetes Cluster | MySQL Database | Total    |
+|---------------|-----------------|--------------------|---------------------|----------------|----------|
+| Development   | €0              | €4.72              | €225.72             | €267           | €497.44  |
+| Staging       | €0              | €4.72              | €225.72             | €134.54        | €364.98  |
+| Production    | €0              | €4.72              | €101.51             | €134.54        | €240.77  |
+| **Total**     | **€0**          | **€14.16**         | **€552.95**        | **€536.08**    | **€1103.19** |
+
+Our three environments will cost an estimated maximum of €1103 per month, with €0 in initial fees.
