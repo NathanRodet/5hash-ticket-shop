@@ -32,6 +32,7 @@ az account set --subscription <my-subscription>
 
 ### Add the subscription basic providers to Azure
 
+```bash
 az provider register --namespace Microsoft.Network
 az provider register --namespace microsoft.support
 az provider register --namespace Microsoft.SerialConsole
@@ -60,6 +61,7 @@ az provider register --namespace Microsoft.Storage
 az provider register --namespace Microsoft.DBforMySQL
 az provider register --namespace Microsoft.OperationalInsights
 az provider register --namespace Microsoft.OperationsManagement
+```
 
 ### Create environment variables file inside the terraform folder : variables.tfvars (should not be pushed to repository, so add it to gitignore in real environment)
 
