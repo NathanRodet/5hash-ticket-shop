@@ -1,22 +1,4 @@
-# 5HASH - Taylor Shift's Ticket Shop
-
-## Issues
-
-About our project :
-
-We encountered some errors in the container after deploying it to AKS. We used the prestashop/shop image but found out the bitnami/prestashop could have been a better option.
-
-The prestashop containers could access the provisionned database but retourned an error :
-```bash
-PHP Warning: Attempt to read property "theme_name" on null in /var/www/html/var/cache/prod/ContainerRtQSNAI/appAppKernelProdContainer.php on line 2869 
-Errors :
-[WARNING] Some commands could not be registered:
-In Configuration.php line 331:
-PrestaShop\PrestaShop\Adapter\Configuration::restrictUpdatesTo(): Argument
-#1 ($shop) must be of type Shop, null given, called in /var/www/html/src/Core/Addon/Theme/ThemeManagerBuilder.php on line 61 
-```
-
-We also encountered an issue with AKS, we started with this provider and all used our free tier so we need to swap from provider from AWS to Azure.
+# Taylor Shift's Ticket Shop
 
 ## Projects Needs
 
